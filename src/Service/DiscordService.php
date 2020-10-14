@@ -30,9 +30,9 @@ class DiscordService {
                             "title" => $title,
                             "description" => $description,
                             "color" => $color,
-                            // "image" => [
-                            //     "url"=> $imageUrl
-                            // ]
+                            "image" => [
+                                "url"=> $imageUrl
+                            ]
                         ]
                     ]
                 ]

@@ -33,7 +33,7 @@ class DiscordMessageProvider {
     }
 
     private function getRankImageUrl($rank) {
-        return $_ENV["RANK_IMAGE_HOST"] . str_replace(" ", "_", $rank);
+        return $_ENV["RANK_IMAGE_HOST"] . str_replace(" ", "_", $rank) . ".png";
     }
 
 }
