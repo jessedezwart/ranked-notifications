@@ -16,8 +16,8 @@ class DiscordMessageProvider {
 
     public function sendPromoteMessage($summonerName, $rank) {
         $this->discordService->sendMessage(
-            "Gefeliciteerd, $summonerName!",
-            "$summonerName is gepromote naar $rank.",
+            sprintf($this->getRandomPromoteTerm(), $summonerName),
+            "$summonerName promoted to $rank.",
             3066993, // green
             $this->getRankImageUrl($rank)
         );
@@ -25,8 +25,8 @@ class DiscordMessageProvider {
 
     public function sendDemoteMessage($summonerName, $rank) {
         $this->discordService->sendMessage(
-            "Helaas, $summonerName!",
-            "$summonerName is gedemote naar $rank.",
+            sprintf($this->getRandomDemoteTerm(), $summonerName),
+            "$summonerName demoted to $rank.",
             15158332, // red
             $this->getRankImageUrl($rank)
         );
@@ -34,6 +34,35 @@ class DiscordMessageProvider {
 
     private function getRankImageUrl($rank) {
         return $_ENV["RANK_IMAGE_HOST"] . str_replace(" ", "_", $rank) . ".png";
+    }
+
+    private function getRandomPromoteTerm() {
+        $sentences = file($_ENV["BASEDIR"] . "/data/promote_terms.txt", FILE_IGNORE_NEW_LINES);
+
+        // Clean out empty lines
+        foreach ($sentences as $key => $sentence) {
+            if (!$sentence) unset($sentences[$key]);
+        }
+        $sentences = array_values($sentences);
+        
+        $randomKey = rand(0, count($sentences) - 1);
+        
+        return $sentences[$randomKey];
+    }
+
+    private function getRandomDemoteTerm() {
+        $sentences = file($_ENV["BASEDIR"] . "/data/demote_terms.txt", FILE_IGNORE_NEW_LINES);
+
+        // Clean out empty lines
+        foreach ($sentences as $key => $sentence) {
+            if (!$sentence) unset($sentences[$key]);
+        }
+        $sentences = array_values($sentences);
+
+        // Get random key
+        $randomKey = rand(0, count($sentences) - 1);
+        
+        return $sentences[$randomKey];
     }
 
 }
