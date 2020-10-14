@@ -16,8 +16,8 @@ CREATE TABLE `summoners` (
   `puuid` varchar(100) NOT NULL,
   `name` varchar(16) NOT NULL,
   `region` varchar(4) NOT NULL,
-  `rank_solo` varchar(20) NOT NULL,
-  `rank_flex` varchar(20) NOT NULL
+  `rank_solo` varchar(20) DEFAULT NULL,
+  `rank_flex` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
