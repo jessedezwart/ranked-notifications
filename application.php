@@ -14,6 +14,8 @@ $application = new Application();
 $dotenv = new Dotenv();
 $dotenv->load(__DIR__ . "/.env");
 
+$_ENV["BASEDIR"] = __DIR__;
+
 // Add commands
 $application->add(new AddUserCommand());
 $application->add(new RunCommand());
