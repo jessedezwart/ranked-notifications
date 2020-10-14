@@ -1,2 +1,5 @@
 .env
 /vendor
+
+# ide thingies
+sftp.json
