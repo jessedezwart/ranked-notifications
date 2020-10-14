@@ -12,7 +12,7 @@ class RankHelper {
         "PLATINUM",
         "DIAMOND",
         "MASTER",
-        "GRANDMASTER".
+        "GRANDMASTER",
         "CHALLENGER"
     ];
 
@@ -30,16 +30,16 @@ class RankHelper {
         $oldTierWorth = array_search($oldRank[0], self::TIER_ORDER);
         $newTierWorth = array_search($newRank[0], self::TIER_ORDER);
 
-        if ($oldTierWorth > $newTierWorth) {
+        if ($oldTierWorth < $newTierWorth) {
             return true;
-        } elseif ($oldTierWorth < $newTierWorth) {
+        } elseif ($oldTierWorth > $newTierWorth) {
             return false;
         }
 
         $oldRankWorth = array_search($oldRank[1], self::RANK_ORDER);
         $newRankWorth = array_search($newRank[1], self::RANK_ORDER);
 
-        if ($oldRankWorth > $newRankWorth) {
+        if ($oldRankWorth < $newRankWorth) {
             return true;
         }
         
