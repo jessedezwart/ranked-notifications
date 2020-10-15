@@ -60,10 +60,10 @@ class RunCommand extends Command
                         $discordMessageProvider = new DiscordMessageProvider($discordService);
                         if ($isHigher) {
                             // Send promote message
-                            $discordMessageProvider->sendPromoteMessage($summoner["name"], $newRank);
+                            $discordMessageProvider->sendPromoteMessage($summoner["name"], $newRank, $rank["queueType"]);
                         } else {
                             // Send demote message
-                            $discordMessageProvider->sendDemoteMessage($summoner["name"], $newRank);
+                            $discordMessageProvider->sendDemoteMessage($summoner["name"], $newRank, $rank["queueType"]);
                         }
 
                         $dbService->updateSoloRank($summoner["id"], $newRank);
@@ -86,10 +86,10 @@ class RunCommand extends Command
                         $discordMessageProvider = new DiscordMessageProvider($discordService);
                         if ($isHigher) {
                             // Send promote message
-                            $discordMessageProvider->sendPromoteMessage($summoner["name"], $newRank);
+                            $discordMessageProvider->sendPromoteMessage($summoner["name"], $newRank, $rank["queueType"]);
                         } else {
                             // Send demote message
-                            $discordMessageProvider->sendDemoteMessage($summoner["name"], $newRank);
+                            $discordMessageProvider->sendDemoteMessage($summoner["name"], $newRank, $rank["queueType"]);
                         }
 
                         $dbService->updateFlexRank($summoner["id"], $newRank);

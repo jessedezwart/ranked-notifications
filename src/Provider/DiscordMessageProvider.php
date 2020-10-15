@@ -2,6 +2,8 @@
 
 namespace App\Provider;
 
+use App\Helper\QueueHelper;
+
 class DiscordMessageProvider {
 
     /**
@@ -14,19 +16,21 @@ class DiscordMessageProvider {
         $this->discordService = $discordService;
     }
 
-    public function sendPromoteMessage($summonerName, $rank) {
+    public function sendPromoteMessage($summonerName, $rank, $queue) {
+        $queue = QueueHelper::getFancyQueueName($queue);
         $this->discordService->sendMessage(
             sprintf($this->getRandomPromoteTerm(), $summonerName),
-            "$summonerName promoted to $rank.",
+            "$summonerName promoted to $rank in $queue.",
             3066993, // green
             $this->getRankImageUrl($rank)
         );
     }
 
-    public function sendDemoteMessage($summonerName, $rank) {
+    public function sendDemoteMessage($summonerName, $rank, $queue) {
+        $queue = QueueHelper::getFancyQueueName($queue);
         $this->discordService->sendMessage(
             sprintf($this->getRandomDemoteTerm(), $summonerName),
-            "$summonerName demoted to $rank.",
+            "$summonerName demoted to $rank in $queue.",
             15158332, // red
             $this->getRankImageUrl($rank)
         );
