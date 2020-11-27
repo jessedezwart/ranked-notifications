@@ -20,7 +20,7 @@ class DiscordMessageProvider {
         $queue = QueueHelper::getFancyQueueName($queue);
         $this->discordService->sendMessage(
             sprintf($this->getRandomPromoteTerm(), $summonerName),
-            "$summonerName promoted to $rank in $queue.",
+            "$summonerName promoted to $rank in $queue. @everyone",
             3066993, // green
             $this->getRankImageUrl($rank)
         );
@@ -30,7 +30,7 @@ class DiscordMessageProvider {
         $queue = QueueHelper::getFancyQueueName($queue);
         $this->discordService->sendMessage(
             sprintf($this->getRandomDemoteTerm(), $summonerName),
-            "$summonerName demoted to $rank in $queue.",
+            "$summonerName demoted to $rank in $queue. @everyone",
             15158332, // red
             $this->getRankImageUrl($rank)
         );
