@@ -33,7 +33,12 @@ class RunCommand extends Command
             $_ENV["DATABASE_NAME"]
         );
 
-        $summoners = $this->getSummoners($dbService);
+        // Set up discord service
+        $discordService = new DiscordService;
+        $discordMessageProvider = new DiscordMessageProvider($discordService);
+
+        // Get all summoner info
+        $summoners = $dbService->getSummoners();
        
         foreach ($summoners as $summoner) {
             // @todo region should not be defined for the whole api class
@@ -44,65 +49,33 @@ class RunCommand extends Command
             $ranks = $riotApi->getRank($summoner["id"]);
             
             foreach ($ranks as $rank) {
+                // Get fancy rank name
                 $newRank = RankHelper::getSummarizedRank($rank["tier"], $rank["rank"]);
 
-                if ($rank["queueType"] === "RANKED_SOLO_5x5") {
-                    // Check if summoner has a rank at all
-                    if (!$summoner["rank_solo"]) {
+                // Get current rank from database
+                $currentRank = $dbService->getCurrentRank($summoner["id"], $rank["queueType"]);
 
-                        $dbService->updateSoloRank($summoner["id"], $newRank);
+                // If no rank is set, update into database and continue
+                if (!$currentRank) {
+                    $dbService->updateRank($summoner["id"], $rank["queueType"], $newRank);
+                    continue;
+                }
 
-                    } elseif ($summoner["rank_solo"] !== $newRank) {
-                        // Check if higher or lower, then notify
-                        $isHigher = RankHelper::isRankHigher($summoner["rank_solo"], $newRank);
+                // If current rank is set but doesnt matches new rank, update in database and send message
+                if ($currentRank != $newRank) {
+                    $dbService->updateRank($summoner["id"], $rank["queueType"], $newRank);
 
-                        $discordService = new DiscordService;
-                        $discordMessageProvider = new DiscordMessageProvider($discordService);
-                        if ($isHigher) {
-                            // Send promote message
-                            $discordMessageProvider->sendPromoteMessage($summoner["name"], $newRank, $rank["queueType"]);
-                        } else {
-                            // Send demote message
-                            $discordMessageProvider->sendDemoteMessage($summoner["name"], $newRank, $rank["queueType"]);
-                        }
-
-                        $dbService->updateSoloRank($summoner["id"], $newRank);
-                    }
-
-                } elseif ($rank["queueType"] === "RANKED_FLEX_SR") {
-                    // Check if summoner has a rank at all
-                    if (!$summoner["rank_flex"]) {
-
-                        $dbService->updateFlexRank(
-                            $summoner["id"],
-                            RankHelper::getSummarizedRank($rank["tier"], $rank["rank"])
-                        );
-
-                    } elseif ($summoner["rank_flex"] !== $newRank) {
-                        // Check if higher or lower, then notify
-                        $isHigher = RankHelper::isRankHigher($summoner["rank_flex"], $newRank);
-
-                        $discordService = new DiscordService;
-                        $discordMessageProvider = new DiscordMessageProvider($discordService);
-                        if ($isHigher) {
-                            // Send promote message
-                            $discordMessageProvider->sendPromoteMessage($summoner["name"], $newRank, $rank["queueType"]);
-                        } else {
-                            // Send demote message
-                            $discordMessageProvider->sendDemoteMessage($summoner["name"], $newRank, $rank["queueType"]);
-                        }
-
-                        $dbService->updateFlexRank($summoner["id"], $newRank);
+                    if (RankHelper::isRankHigher($currentRank, $newRank)) {
+                        $discordMessageProvider->sendPromoteMessage($summoner["name"], $newRank, $rank["queueType"]);
+                    } else {
+                        $discordMessageProvider->sendDemoteMessage($summoner["name"], $newRank, $rank["queueType"]);
                     }
                 }
+                
             }
         }
 
         return Command::SUCCESS;
-    }
-
-    private function getSummoners($dbService) {
-        return $dbService->getSummoners();
     }
 
 }

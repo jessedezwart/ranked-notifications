@@ -9,6 +9,11 @@ class QueueHelper {
         "RANKED_FLEX_SR" => "flex queue"
     ];
 
+    const QUEUE_TYPES = [
+        "RANKED_SOLO_5x5",
+        "RANKED_FLEX_SR"
+    ];
+
     public static function getFancyQueueName($queueName) {
         return self::FANCY_QUEUE_NAMES[$queueName];
     }

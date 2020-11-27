@@ -23,15 +23,24 @@ class DatabaseService {
         }
     }
 
-    public function updateSoloRank($summonerId, $rank) {
-        $stmt = $this->conn->prepare("UPDATE summoners SET rank_solo=? WHERE id=?");
-        $stmt->bind_param("ss", $rank, $summonerId);
+    public function getCurrentRank($summonerId, $queueType) {
+        // Check if summoner already exists
+        $stmt = $this->conn->prepare("SELECT rank FROM rank_history WHERE summoner_id=? AND queue_type=? ORDER BY id DESC LIMIT 1");
+        $stmt->bind_param("ss", $summonerId, $queueType);
         $stmt->execute();
+        $result = $stmt->get_result();
+        $result = $result->fetch_all(MYSQLI_ASSOC);
+
+        if (!empty($result)) {
+            return $result[0]["rank"];
+        }
+        
+        return;
     }
 
-    public function updateFlexRank($summonerId, $rank) {
-        $stmt = $this->conn->prepare("UPDATE summoners SET rank_flex=? WHERE id=?");
-        $stmt->bind_param("ss", $rank, $summonerId);
+    public function updateRank($summonerId, $queueType, $rank) {
+        $stmt = $this->conn->prepare("INSERT INTO rank_history (summoner_id, queue_type, rank) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $summonerId, $queueType, $rank);
         $stmt->execute();
     }
 
