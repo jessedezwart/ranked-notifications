@@ -1,6 +1,7 @@
 {
     "name": "jessedezwart/ranked-notifications",
     "type": "project",
+    "description": "Find changes in League rank from a set list of summoners and push changes to Discord.",
     "authors": [
         {
             "name": "Jesse de Zwart",
