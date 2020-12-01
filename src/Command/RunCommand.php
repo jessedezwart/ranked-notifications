@@ -49,27 +49,29 @@ class RunCommand extends Command
             $ranks = $riotApi->getRank($summoner["id"]);
             
             foreach ($ranks as $rank) {
+                
                 // Get fancy rank name
                 $newRank = RankHelper::getSummarizedRank($rank["tier"], $rank["rank"]);
 
                 // Get current rank from database
-                $currentRank = $dbService->getCurrentRank($summoner["id"], $rank["queueType"]);
+                $currentRankAndLp = $dbService->getCurrentRank($summoner["id"], $rank["queueType"]);
 
                 // If no rank is set, update into database and continue
-                if (!$currentRank) {
-                    $dbService->updateRank($summoner["id"], $rank["queueType"], $newRank);
+                if (!$currentRankAndLp) {
+                    $dbService->updateRank($summoner["id"], $rank["queueType"], $newRank, $rank["leaguePoints"]);
                     continue;
                 }
 
-                // If current rank is set but doesnt matches new rank, update in database and send message
-                if ($currentRank != $newRank) {
-                    $dbService->updateRank($summoner["id"], $rank["queueType"], $newRank);
-
-                    if (RankHelper::isRankHigher($currentRank, $newRank)) {
+                // If current rank is set but doesnt matches new rank, update in database
+                if ($currentRankAndLp["rank"] != $newRank) {
+                    if (RankHelper::isRankHigher($currentRankAndLp["rank"], $newRank)) {
                         $discordMessageProvider->sendPromoteMessage($summoner["name"], $newRank, $rank["queueType"]);
                     } else {
                         $discordMessageProvider->sendDemoteMessage($summoner["name"], $newRank, $rank["queueType"]);
                     }
+                    $dbService->updateRank($summoner["id"], $rank["queueType"], $newRank, $rank["leaguePoints"]);
+                } elseif ($currentRankAndLp["lp"] != $rank["rank"]) {
+                    $dbService->updateRank($summoner["id"], $rank["queueType"], $newRank, $rank["leaguePoints"]);
                 }
                 
             }

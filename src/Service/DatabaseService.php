@@ -25,22 +25,22 @@ class DatabaseService {
 
     public function getCurrentRank($summonerId, $queueType) {
         // Check if summoner already exists
-        $stmt = $this->conn->prepare("SELECT rank FROM rank_history WHERE summoner_id=? AND queue_type=? ORDER BY id DESC LIMIT 1");
+        $stmt = $this->conn->prepare("SELECT rank, lp FROM rank_history WHERE summoner_id=? AND queue_type=? ORDER BY id DESC LIMIT 1");
         $stmt->bind_param("ss", $summonerId, $queueType);
         $stmt->execute();
         $result = $stmt->get_result();
         $result = $result->fetch_all(MYSQLI_ASSOC);
 
         if (!empty($result)) {
-            return $result[0]["rank"];
+            return $result[0];
         }
         
         return;
     }
 
-    public function updateRank($summonerId, $queueType, $rank) {
-        $stmt = $this->conn->prepare("INSERT INTO rank_history (summoner_id, queue_type, rank) VALUES (?, ?, ?)");
-        $stmt->bind_param("sss", $summonerId, $queueType, $rank);
+    public function updateRank($summonerId, $queueType, $rank, $lp) {
+        $stmt = $this->conn->prepare("INSERT INTO rank_history (summoner_id, queue_type, rank, lp) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("sssi", $summonerId, $queueType, $rank, $lp);
         $stmt->execute();
     }
 
