@@ -33,7 +33,7 @@ class RunCommand extends Command
             $_ENV["DATABASE_NAME"]
         );
 
-        // Set up discord service
+        // Set up discord and discord message service
         $discordService = new DiscordService;
         $discordMessageProvider = new DiscordMessageProvider($discordService);
 
